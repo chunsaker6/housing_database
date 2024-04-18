@@ -26,13 +26,12 @@ def cli():
 @click.command()
 def create():
     with getdb(create=True) as con:
-
         con.execute(
 '''CREATE TABLE basics(
     id          INTEGER PRIMARY KEY,
     price       INTEGER NOT NULL,
     bedrooms    INTEGER,
-    bathrooms   INTEGER,
+    bathrooms   INTEGER
 )''')
 
 
@@ -42,8 +41,7 @@ def create():
     sqft_living     INTEGER,
     sqft_lot        INTEGER,
     sqft_above      INTEGER,
-    sqft_basement   INTEGER,
-    
+    sqft_basement   INTEGER
 )''')
 
         con.execute(
@@ -51,8 +49,7 @@ def create():
     id               INTEGER PRIMARY KEY,
     property_listing DATE,
     year_built       INTEGER,
-    year_reno        INTEGER,
-    
+    year_reno        INTEGER
 )''')
 
 
@@ -61,7 +58,7 @@ def create():
     id          INTEGER PRIMARY KEY,
     zipcode     INTEGER,
     lat         FLOAT,
-    longitude   FLOAT,
+    longitude   FLOAT
 )''')
 
         con.execute(
@@ -71,8 +68,9 @@ def create():
     waterfront  INTEGER,
     the_view    INTEGER,
     condition   INTEGER,
-    grade       INTEGER,
+    grade       INTEGER
 )''')
+
     print('database created')
 
 
