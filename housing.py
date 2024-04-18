@@ -5,7 +5,7 @@ import os
 import sqlite3
 import sys
 
-DB_FILE = 'network.db'
+DB_FILE = 'housing.db'
 
 def getdb(create=False):
     if os.path.exists(DB_FILE):
@@ -26,64 +26,55 @@ def cli():
 @click.command()
 def create():
     with getdb(create=True) as con:
+
         con.execute(
-'''CREATE TABLE users (
+'''CREATE TABLE basics(
     id          INTEGER PRIMARY KEY,
-    email       TEXT NOT NULL
+    price       INTEGER NOT NULL,
+    bedrooms    INTEGER,
+    bathrooms   INTEGER,
 )''')
-        con.execute(
-'''CREATE UNIQUE INDEX users_email ON users (email)''')
+
 
         con.execute(
-'''CREATE TABLE accounts (
+'''CREATE TABLE sqft(
+    id              INTEGER PRIMARY KEY,
+    sqft_living     INTEGER,
+    sqft_lot        INTEGER,
+    sqft_above      INTEGER,
+    sqft_basement   INTEGER,
+    
+)''')
+
+        con.execute(
+'''CREATE TABLE time(
+    id               INTEGER PRIMARY KEY,
+    property_listing DATE,
+    year_built       INTEGER,
+    year_reno        INTEGER,
+    
+)''')
+
+
+        con.execute(
+'''CREATE TABLE location(
     id          INTEGER PRIMARY KEY,
-    user_id     INTEGER NOT NULL,
-    username    TEXT NOT NULL,
-
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
+    zipcode     INTEGER,
+    lat         FLOAT,
+    longitude   FLOAT,
 )''')
-        con.execute(
-'''CREATE TABLE followers (
-    id          INTEGER NOT NULL,
-    follower_id     INTEGER NOT NULL,
 
-    PRIMARY KEY (id, follower_id)
-    FOREIGN KEY (id) REFERENCES accounts (id) ON DELETE CASCADE ON UPDATE CASCADE
-    FOREIGN KEY (follower_id) REFERENCES accounts (id) ON DELETE CASCADE ON UPDATE CASCADE
-)''')
         con.execute(
-'''CREATE TABLE posts (
+'''CREATE TABLE amenities(
     id          INTEGER PRIMARY KEY,
-    text        TEXT NOT NULL,
-    account_id  INTEGER NOT NULL,
-
-    FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE ON UPDATE CASCADE
-)''')
-        con.execute(
-'''CREATE TABLE interests (
-    id          INTEGER PRIMARY KEY,
-    name        TEXT NOT NULL
-)''')
-        con.execute(
-'''CREATE TABLE hasinterests (
-    account_id       INTEGER NOT NULL,
-    interest_id      INTEGER NOT NULL,
-
-    PRIMARY KEY (account_id, interest_id)
-    FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE ON UPDATE CASCADE
-    FOREIGN KEY (interest_id) REFERENCES interests (id) ON DELETE CASCADE ON UPDATE CASCADE
-)''')
-        con.execute(
-'''CREATE TABLE comments (
-    account_id      INTEGER NOT NULL,
-    post_id         INTEGER NOT NULL,
-    content         TEXT NOT NULL,
-
-    PRIMARY KEY (account_id, post_id)
-    FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE ON UPDATE CASCADE
-    FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE ON UPDATE CASCADE
+    floors      INTEGER,
+    waterfront  INTEGER,
+    the_view    INTEGER,
+    condition   INTEGER,
+    grade       INTEGER,
 )''')
     print('database created')
+
 
 @click.command()
 @click.argument('email')
