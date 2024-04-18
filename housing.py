@@ -75,35 +75,63 @@ def create():
 
 
 @click.command()
-@click.argument('email')
-def adduser(email):
+@click.argument('price')
+@click.argument('bathrooms')
+@click.argument('bedrooms')
+def addBasics(price, bathrooms, bedrooms):
     with getdb() as con:
         cursor = con.cursor()
-        cursor.execute('''INSERT INTO users (email) VALUES (?)''', (email,))
+        cursor.execute('''INSERT INTO basics (price, bathrooms, bedrooms) VALUES (?, ?, ?)''', (price, bathrooms, bedrooms,))
         id = cursor.lastrowid
-        print('User (', id, ') created with email address (', email, ')')
+        print('On id (', id, ') Adding price(', price, '), bathrooms(', bathrooms, '), bedrooms(',bedrooms, '), into table basics') 
 
 @click.command()
-@click.argument('email')
-@click.argument('username')
-def addaccount(email, username):
+@click.argument('property_listing')
+@click.argument('year_built')
+@click.argument('year_reno')
+def addTime(property_listing, year_built, year_reno):
     with getdb() as con:
         cursor = con.cursor()
-        cursor.execute('''INSERT INTO accounts (user_id, username)
-VALUES ((SELECT id FROM users WHERE email = ?), ?)''', (email, username))
+        cursor.execute('''INSERT INTO sqft (property_listing, year_built, year_reno)
+VALUES (?, ?, ?)''', (propery_listing, year_built, year_reno))
         id = cursor.lastrowid
-        print('Account (', id, ') created with username (', username, ') for user (', id, ')(', email,')')
-        #print(f'inserted with id={id}')
+        print('On id (', id, ') Adding property_listing(', property_listing, '), year_built(', year_built, '), year_reno(', year_reno, '), into table time') 
 
 @click.command()
-@click.argument('interest')
-def addinterest(interest):
+@click.argument('floors')
+@click.argument('waterfront')
+@click.argument('the_view')
+@click.argument('condition')
+@click.argument('grade')
+def addAmenities(floors, waterfront, the_view, condition, grade):
     with getdb() as con:
         cursor = con.cursor()
-        cursor.execute('''INSERT INTO interests (name) VALUES (?)''', (interest,))
+        cursor.execute('''INSERT INTO amenities (floors, waterfront, the_view, condition, grade)
+VALUES (?, ?, ?, ?, ?)''', (floors, waterfront, the_view, condition, grade))
         id = cursor.lastrowid
-        print('Added this interest (', interest, ')')
-        #print(f'inserted with name={interest}')
+        print('On id (', id, ') Adding floors (', floors, '), waterfront (', waterfront, '), view (', the_view, '), condtion (', condition, '), grade (', grade, ') into table amenities') 
+
+@click.command()
+@click.argument('zipcode')
+@click.argument('lat')
+@click.argument('longitude')
+def addLocation(zipcode, lat, longitude):
+    with getdb() as con:
+        cursor = con.cursor()
+        cursor.execute('''INSERT INTO loaction (zipcode, lat, longitude) VALUES (?, ?, ?)''', (zipcode, lat, longitude))
+        id = cursor.lastrowid
+        print('On id (', id, ') Adding zipcode(', zipcode, '), lat(', lat, '), longitude(', longitude, '), into table loaction') 
+
+@click.command()
+@click.argument('zipcode')
+@click.argument('lat')
+@click.argument('longitude')
+def addLocation(zipcode, lat, longitude):
+    with getdb() as con:
+        cursor = con.cursor()
+        cursor.execute('''INSERT INTO loaction (zipcode, lat, longitude) VALUES (?, ?, ?)''', (zipcode, lat, longitude))
+        id = cursor.lastrowid
+        print('Added location info')
 
 @click.command()
 @click.argument('account_id')
