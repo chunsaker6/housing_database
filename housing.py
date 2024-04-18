@@ -92,7 +92,7 @@ def addTime(property_listing, year_built, year_reno):
     with getdb() as con:
         cursor = con.cursor()
         cursor.execute('''INSERT INTO sqft (property_listing, year_built, year_reno)
-VALUES (?, ?, ?)''', (propery_listing, year_built, year_reno))
+VALUES (?, ?, ?)''', (property_listing, year_built, year_reno))
         id = cursor.lastrowid
         print('On id (', id, ') Adding property_listing(', property_listing, '), year_built(', year_built, '), year_reno(', year_reno, '), into table time') 
 
@@ -110,16 +110,6 @@ VALUES (?, ?, ?, ?, ?)''', (floors, waterfront, the_view, condition, grade))
         id = cursor.lastrowid
         print('On id (', id, ') Adding floors (', floors, '), waterfront (', waterfront, '), view (', the_view, '), condtion (', condition, '), grade (', grade, ') into table amenities') 
 
-@click.command()
-@click.argument('zipcode')
-@click.argument('lat')
-@click.argument('longitude')
-def addLocation(zipcode, lat, longitude):
-    with getdb() as con:
-        cursor = con.cursor()
-        cursor.execute('''INSERT INTO loaction (zipcode, lat, longitude) VALUES (?, ?, ?)''', (zipcode, lat, longitude))
-        id = cursor.lastrowid
-        print('On id (', id, ') Adding zipcode(', zipcode, '), lat(', lat, '), longitude(', longitude, '), into table loaction') 
 
 @click.command()
 @click.argument('zipcode')
@@ -136,7 +126,7 @@ def addLocation(zipcode, lat, longitude):
 @click.argument('sqft_lot')
 @click.argument('sqft_above')
 @click.argument('sqft_basement')
-def addsqft(sqft_living, sqft_lot, sqft_above, sqft_basement ):
+def addSqft(sqft_living, sqft_lot, sqft_above, sqft_basement ):
     with getdb() as con:
         cursor = con.cursor()
         cursor.execute('''INSERT INTO sqft (sqft_living, sqft_lot, sqft_above, sqft_basement) VALUES (?, ?, ?, ?)''', (sqft_living, sqft_lot, sqft_above, sqft_basement,))
@@ -146,7 +136,7 @@ def addsqft(sqft_living, sqft_lot, sqft_above, sqft_basement ):
 
 
 @click.command()
-def getbasics():
+def getBasics():
     with getdb() as con:
         cursor = con.cursor()
         cursor.execute('''SELECT * FROM basics''')
@@ -155,7 +145,7 @@ def getbasics():
         id = cursor.lastrowid
 
 @click.command()
-def getsqft():
+def getSqft():
     with getdb() as con:
         cursor = con.cursor()
         cursor.execute('''SELECT * FROM sqft''')
@@ -164,7 +154,7 @@ def getsqft():
         id = cursor.lastrowid
 
 @click.command()
-def gettime():
+def getTime():
     with getdb() as con:
         cursor = con.cursor()
         cursor.execute('''SELECT * FROM time''')
@@ -173,7 +163,7 @@ def gettime():
         id = cursor.lastrowid
 
 @click.command()
-def getlocation():
+def getLocation():
     with getdb() as con:
         cursor = con.cursor()
         cursor.execute('''SELECT * FROM location''')
@@ -182,7 +172,7 @@ def getlocation():
         id = cursor.lastrowid
 
 @click.command()
-def getamenities():
+def getAmenities():
     with getdb() as con:
         cursor = con.cursor()
         cursor.execute('''SELECT * FROM amenities''')
@@ -191,12 +181,16 @@ def getamenities():
         id = cursor.lastrowid
 
 cli.add_command(create)
-cli.add_command(addsqft)
-cli.add_command(getbasics)
-cli.add_command(getsqft)
-cli.add_command(gettime)
-cli.add_command(getlocation)
-cli.add_command(getamenities)
+cli.add_command(addBasics)
+cli.add_command(addTime)
+cli.add_command(addAmenities)
+cli.add_command(addLocation)
+cli.add_command(addSqft)
+cli.add_command(getBasics)
+cli.add_command(getSqft)
+cli.add_command(getTime)
+cli.add_command(getLocation)
+cli.add_command(getAmenities)
 
 
 cli()
