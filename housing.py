@@ -73,7 +73,6 @@ def create():
 
     print('database created')
 
-
 @click.command()
 @click.argument('price')
 @click.argument('bathrooms')
@@ -131,180 +130,73 @@ def addLocation(zipcode, lat, longitude):
         cursor = con.cursor()
         cursor.execute('''INSERT INTO loaction (zipcode, lat, longitude) VALUES (?, ?, ?)''', (zipcode, lat, longitude))
         id = cursor.lastrowid
-        print('Added location info')
+        print('On id (', id, ') Adding zipcode(', zipcode, '), lat(', lat, '), longitude(', longitude, '), into table loaction')
 
-@click.command()
-@click.argument('account_id')
-@click.argument('interest_id')
-def addaccountinterest(account_id, interest_id):
+@click.argument('sqft_living')
+@click.argument('sqft_lot')
+@click.argument('sqft_above')
+@click.argument('sqft_basement')
+def addsqft(sqft_living, sqft_lot, sqft_above, sqft_basement ):
     with getdb() as con:
         cursor = con.cursor()
-        cursor.execute('''INSERT INTO hasinterests (account_id, interest_id) VALUES (?, ?)''', (account_id, interest_id,))
+        cursor.execute('''INSERT INTO sqft (sqft_living, sqft_lot, sqft_above, sqft_basement) VALUES (?, ?, ?, ?)''', (sqft_living, sqft_lot, sqft_above, sqft_basement,))
         id = cursor.lastrowid
-        print('Account (', account_id, ') has this interest (', interest_id, ')')
+        print('On id (', id, ') Adding sqft_living (', sqft_living, ') Adding sqft_lot (', sqft_lot, ') Adding sqft_above (', sqft_above, ') Adding sqft_basement (', sqft_basement, ') to table ( sqft )' )
         #print(f'inserted with name={interest}')
 
-@click.command()
-@click.argument('text')
-@click.argument('account')
-def addpost(text, account):
-    with getdb() as con:
-        cursor = con.cursor()
-        cursor.execute('''INSERT INTO posts (text, account_id) VALUES (?, ?)''', (text, account))
-        id = cursor.lastrowid
-        print('Posted to account (', id, ')(',  text, ')')
-        #print(f'inserted with comment={text}')
-        
-@click.command()
-@click.argument('account')
-@click.argument('post')
-@click.argument('comment')
-def addcomment(account,  post, comment):
-    with getdb() as con:
-        cursor = con.cursor()
-        cursor.execute('''INSERT INTO comments (account_id, post_id, content) VALUES (?, ?, ?)''', (account, post, comment))
-        id = cursor.lastrowid
-        #print(f'inserted with comment={comment}')
-        print('Creating comment (', comment, ') on a post (', post, ') from account (', account, ')')
-
 
 @click.command()
-def getcomment():
+def getbasics():
     with getdb() as con:
         cursor = con.cursor()
-        cursor.execute('''SELECT * FROM comments''')
+        cursor.execute('''SELECT * FROM basics''')
         for row in cursor:
             print(row)
         id = cursor.lastrowid
 
 @click.command()
-def getpost():
+def getsqft():
     with getdb() as con:
         cursor = con.cursor()
-        cursor.execute('''SELECT * FROM posts''')
+        cursor.execute('''SELECT * FROM sqft''')
         for row in cursor:
             print(row)
         id = cursor.lastrowid
 
 @click.command()
-def getuser():
+def gettime():
     with getdb() as con:
         cursor = con.cursor()
-        cursor.execute('''SELECT * FROM users''')
+        cursor.execute('''SELECT * FROM time''')
         for row in cursor:
             print(row)
         id = cursor.lastrowid
 
 @click.command()
-def getaccount():
+def getlocation():
     with getdb() as con:
         cursor = con.cursor()
-        cursor.execute('''SELECT * FROM accounts''')
+        cursor.execute('''SELECT * FROM location''')
         for row in cursor:
             print(row)
         id = cursor.lastrowid
 
 @click.command()
-def getinterest():
+def getamenities():
     with getdb() as con:
         cursor = con.cursor()
-        cursor.execute('''SELECT * FROM interests''')
+        cursor.execute('''SELECT * FROM amenities''')
         for row in cursor:
             print(row)
         id = cursor.lastrowid
-
-@click.command()
-def gethasinterest():
-    with getdb() as con:
-        cursor = con.cursor()
-        cursor.execute('''SELECT * FROM hasinterests''')
-        for row in cursor:
-            print(row)
-        id = cursor.lastrowid
-
-@click.command()
-def getallsimilarinterests():
-    with getdb() as con:
-        cursor = con.cursor()
-        cursor.execute('''SELECT accounts.id, a2.id, SUM(1) FROM accounts
-                       JOIN hasinterests on accounts.id = hasinterests.account_id
-                       JOIN interests on hasinterests.interest_id = interests.id
-                       JOIN hasinterests h2 on interests.id = h2.interest_id
-                       JOIN accounts a2 on a2.id = h2.account_id where accounts.id != a2.id
-                       GROUP BY accounts.id, a2.id
-                       ''')
-        for row in cursor:
-            print(row)
-        #id = cursor.lastrowid
-
-@click.command()
-@click.argument('account_id')
-def getsimilarinterests(account_id):
-    with getdb() as con:
-        cursor = con.cursor()
-        cursor.execute('''SELECT accounts.id, a2.id, SUM(1) FROM accounts
-                       JOIN hasinterests on accounts.id = hasinterests.account_id
-                       JOIN interests on hasinterests.interest_id = interests.id
-                       JOIN hasinterests h2 on interests.id = h2.interest_id
-                       JOIN accounts a2 on a2.id = h2.account_id 
-                       WHERE accounts.id != a2.id
-                       AND accounts.id = (?)
-                       GROUP BY accounts.id, a2.id
-                       ORDER BY SUM(1) DESC
-                       ''', (account_id))
-        for row in cursor:
-            print(row)
-        #id = cursor.lastrowid
-            
-@click.command()
-def getallsimilarcomments():
-    with getdb() as con:
-        cursor = con.cursor()
-        cursor.execute('''SELECT accounts.id, a2.id, posts.id, posts.text, SUM(1) FROM accounts
-                       JOIN comments on accounts.id = comments.account_id
-                       JOIN posts on comments.post_id = posts.id
-                       JOIN comments c2 on c2.post_id = posts.id
-                       JOIN accounts a2 on a2.id = c2.account_id where accounts.id != a2.id 
-                       group by accounts.id, a2.id
-                       ''')
-        for row in cursor:
-            print(row)
-        id = cursor.lastrowid
-
-@click.command()
-@click.argument('account_id')
-def getsimilarcomments(account_id):
-    with getdb() as con:
-        cursor = con.cursor()
-        cursor.execute('''SELECT accounts.id, a2.id, posts.id, posts.text, SUM(1) FROM accounts
-                       JOIN comments on accounts.id = comments.account_id
-                       JOIN posts on comments.post_id = posts.id
-                       JOIN comments c2 on c2.post_id = posts.id
-                       JOIN accounts a2 on a2.id = c2.account_id 
-                       WHERE accounts.id != a2.id
-                       AND accounts.id = (?)
-                       GROUP BY accounts.id, a2.id
-                       ORDER BY SUM(1) DESC
-                       ''', (account_id))
-        for row in cursor:
-            print(row)
-        #id = cursor.lastrowid
 
 cli.add_command(create)
-cli.add_command(adduser)
-cli.add_command(addaccount)
-cli.add_command(addpost)
-cli.add_command(addinterest)
-cli.add_command(addaccountinterest)
-cli.add_command(addcomment)
-cli.add_command(getcomment)
-cli.add_command(getpost)
-cli.add_command(getuser)
-cli.add_command(getaccount)
-cli.add_command(getinterest)
-cli.add_command(getallsimilarinterests)
-cli.add_command(getsimilarinterests)
-cli.add_command(getallsimilarcomments)
-cli.add_command(getsimilarcomments)
+cli.add_command(addsqft)
+cli.add_command(getbasics)
+cli.add_command(getsqft)
+cli.add_command(gettime)
+cli.add_command(getlocation)
+cli.add_command(getamenities)
+
 
 cli()
