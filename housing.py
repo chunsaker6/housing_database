@@ -47,7 +47,7 @@ def create():
         con.execute(
 '''CREATE TABLE time(
     id               INTEGER PRIMARY KEY,
-    property_listing DATE,
+    property_listing TEXT,
     year_built       INTEGER,
     year_reno        INTEGER
 )''')
@@ -91,7 +91,7 @@ def addBasics(price, bathrooms, bedrooms):
 def addTime(property_listing, year_built, year_reno):
     with getdb() as con:
         cursor = con.cursor()
-        cursor.execute('''INSERT INTO sqft (property_listing, year_built, year_reno)
+        cursor.execute('''INSERT INTO time (property_listing, year_built, year_reno)
 VALUES (?, ?, ?)''', (property_listing, year_built, year_reno))
         id = cursor.lastrowid
         print('On id (', id, ') Adding property_listing(', property_listing, '), year_built(', year_built, '), year_reno(', year_reno, '), into table time') 
