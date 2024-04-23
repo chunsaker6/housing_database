@@ -207,7 +207,7 @@ def getAveragePricePerSqftByZip(zip_code):
                         JOIN sqft s ON l.id = s.id
                         WHERE l.zipcode = (?)
                         GROUP BY l.zipcode;
-                       ''', (zip_code))
+                       ''', (zip_code,))
         for row in cursor:
             print(row)
         #id = cursor.lastrowid
@@ -224,7 +224,7 @@ def getAvgPriceByFloor(floor):
                         JOIN amenities a ON b.id = a.id
                         WHERE a.floors = (?)
                         GROUP BY a.floors;
-                       ''', (floor))
+                       ''', (floor,))
         for row in cursor:
             print(row)
         #id = cursor.lastrowid
