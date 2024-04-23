@@ -91,7 +91,7 @@ def addBasics(price, bathrooms, bedrooms):
 def addTime(property_listing, year_built, year_reno):
     with getdb() as con:
         cursor = con.cursor()
-        cursor.execute('''INSERT INTO sqft (property_listing, year_built, year_reno)
+        cursor.execute('''INSERT INTO time (property_listing, year_built, year_reno)
 VALUES (?, ?, ?)''', (property_listing, year_built, year_reno))
         id = cursor.lastrowid
         print('On id (', id, ') Adding property_listing(', property_listing, '), year_built(', year_built, '), year_reno(', year_reno, '), into table time') 
@@ -181,6 +181,54 @@ def getAmenities():
             print(row)
         id = cursor.lastrowid
 
+
+@click.command()
+def getAveragePriceThreeBed():
+    with getdb() as con:
+        cursor = con.cursor()
+        cursor.execute('''SELECT AVG(price) AS average_price_3_bedroom
+                        FROM basics
+                        WHERE bedrooms = 3;
+                       ''')
+        for row in cursor:
+            print(row)
+        #id = cursor.lastrowid
+
+
+@click.command()
+@click.argument('zip_code')
+def getAveragePricePerSqftByZip(zip_code):
+    with getdb() as con:
+        cursor = con.cursor()
+        cursor.execute('''SELECT l.zipcode,
+                        AVG(b.price * 1.0 / s.sqft_lot) AS average_price_per_sqft_lot
+                        FROM location l
+                        JOIN basics b ON l.id = b.id
+                        JOIN sqft s ON l.id = s.id
+                        WHERE l.zipcode = (?)
+                        GROUP BY l.zipcode;
+                       ''', (zip_code))
+        for row in cursor:
+            print(row)
+        #id = cursor.lastrowid
+            
+
+@click.command()
+@click.argument('floor')
+def getAvgPriceByFloor(floor):
+    with getdb() as con:
+        cursor = con.cursor()
+        cursor.execute('''SELECT a.floors,
+                        AVG(b.price) AS average_price
+                        FROM basics b
+                        JOIN amenities a ON b.id = a.id
+                        WHERE a.floors = (?)
+                        GROUP BY a.floors;
+                       ''', (floor))
+        for row in cursor:
+            print(row)
+        #id = cursor.lastrowid
+
 cli.add_command(create)
 cli.add_command(addBasics)
 cli.add_command(addTime)
@@ -192,6 +240,10 @@ cli.add_command(getSqft)
 cli.add_command(getTime)
 cli.add_command(getLocation)
 cli.add_command(getAmenities)
+cli.add_command(getAveragePriceThreeBed)
+cli.add_command(getAveragePricePerSqftByZip)
+cli.add_command(getAvgPriceByFloor)
+
 
 
 cli()
