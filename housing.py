@@ -118,10 +118,11 @@ VALUES (?, ?, ?, ?, ?)''', (floors, waterfront, the_view, condition, grade))
 def addLocation(zipcode, lat, longitude):
     with getdb() as con:
         cursor = con.cursor()
-        cursor.execute('''INSERT INTO loaction (zipcode, lat, longitude) VALUES (?, ?, ?)''', (zipcode, lat, longitude))
+        cursor.execute('''INSERT INTO location (zipcode, lat, longitude) VALUES (?, ?, ?)''', (zipcode, lat, longitude))
         id = cursor.lastrowid
-        print('On id (', id, ') Adding zipcode(', zipcode, '), lat(', lat, '), longitude(', longitude, '), into table loaction')
+        print('On id (', id, ') Adding zipcode(', zipcode, '), lat(', lat, '), longitude(', longitude, '), into table location')
 
+@click.command()
 @click.argument('sqft_living')
 @click.argument('sqft_lot')
 @click.argument('sqft_above')
