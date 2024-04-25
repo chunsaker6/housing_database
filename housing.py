@@ -4,6 +4,7 @@ import click
 import os
 import sqlite3
 import sys
+import math
 
 DB_FILE = 'housing.db'
 
@@ -191,7 +192,7 @@ def getAveragePriceThreeBed():
                         WHERE bedrooms = 3;
                        ''')
         for row in cursor:
-            print(row)
+            print(f"Average price of 3 bedrooms: ${row[0]}")
         #id = cursor.lastrowid
 
 
@@ -229,6 +230,30 @@ def getAvgPriceByFloor(floor):
             print(row)
         #id = cursor.lastrowid
 
+@click.command()
+@click.argument('lat')
+@click.argument('longitude')
+def getAvgPriceByLatLong(lat, longitude):
+    #convert lat and long to minuetes
+    lat = float(lat)
+    longitude = float(longitude)
+    latMin = int((math.modf(lat)[0]) * 60)
+    longMin = int(abs((math.modf(longitude)[0])) * 60)
+    with getdb() as con:
+        cursor = con.cursor()
+        cursor.execute('''SELECT FLOOR((l.lat - FLOOR(l.lat)) * 60) AS laMin,
+                        FLOOR((l.longitude - FLOOR(l.longitude)) * 60) AS loMin, 
+                        ROUND(AVG(b.price * 1.0),2) AS average_price,
+                        COUNT(1)
+                        FROM location l
+                        JOIN basics b ON l.id = b.id
+                        WHERE laMin BETWEEN ((?) - 1) AND ((?) + 1) AND loMin BETWEEN ((?) - 1) AND ((?) + 1)
+                       ''', (latMin, latMin, longMin, longMin))
+        for row in cursor:
+            print(f"Average price of given location based on {row[3]} homes within one mile: ${row[2]}")
+    
+
+
 cli.add_command(create)
 cli.add_command(addBasics)
 cli.add_command(addTime)
@@ -243,6 +268,7 @@ cli.add_command(getAmenities)
 cli.add_command(getAveragePriceThreeBed)
 cli.add_command(getAveragePricePerSqftByZip)
 cli.add_command(getAvgPriceByFloor)
+cli.add_command(getAvgPriceByLatLong)
 
 
 
