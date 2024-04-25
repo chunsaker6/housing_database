@@ -210,7 +210,7 @@ def getAveragePricePerSqftByZip(zip_code):
                         GROUP BY l.zipcode;
                        ''', (zip_code,))
         for row in cursor:
-            print(row)
+            print(f"Average price per sqft of homes in {row[0]}: ${row[1]}")
         #id = cursor.lastrowid
             
 
@@ -227,7 +227,7 @@ def getAvgPriceByFloor(floor):
                         GROUP BY a.floors;
                        ''', (floor,))
         for row in cursor:
-            print(row)
+            print(f"Average price for a home with {row[0]} floors: ${row[1]}")
         #id = cursor.lastrowid
 
 @click.command()
