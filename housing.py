@@ -186,7 +186,7 @@ def getAmenities():
 def getAveragePriceThreeBed():
     with getdb() as con:
         cursor = con.cursor()
-        cursor.execute('''SELECT AVG(price) AS average_price_3_bedroom
+        cursor.execute('''SELECT ROUND(AVG(price), 2) AS average_price_3_bedroom
                         FROM basics
                         WHERE bedrooms = 3;
                        ''')
@@ -201,7 +201,7 @@ def getAveragePricePerSqftByZip(zip_code):
     with getdb() as con:
         cursor = con.cursor()
         cursor.execute('''SELECT l.zipcode,
-                        AVG(b.price * 1.0 / s.sqft_lot) AS average_price_per_sqft_lot
+                        ROUND(AVG(b.price * 1.0 / s.sqft_lot), 2) AS average_price_per_sqft_lot
                         FROM location l
                         JOIN basics b ON l.id = b.id
                         JOIN sqft s ON l.id = s.id
@@ -219,7 +219,7 @@ def getAvgPriceByFloor(floor):
     with getdb() as con:
         cursor = con.cursor()
         cursor.execute('''SELECT a.floors,
-                        AVG(b.price) AS average_price
+                        ROUND(AVG(b.price), 2) AS average_price
                         FROM basics b
                         JOIN amenities a ON b.id = a.id
                         WHERE a.floors = (?)
